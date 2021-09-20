@@ -1,0 +1,68 @@
+PHASE_1
+lab-2@lab2-OptiPlex-3040:~/Desktop/Bomb/Assignment 1_2(1)/Assignment 1/bomb003$ gdb bomb //gdb is a debugger that allows you to stop a program while it is running.
+GNU gdb (Ubuntu 9.2-0ubuntu1~20.04) 9.2
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from bomb...
+(gdb) b phase_1   // set up break point at phase_1 because to protect the bomb from explode.
+Breakpoint 1 at 0x400e8d
+(gdb) r     // starting the program or execution
+Starting program: /home/lab-2/Desktop/Bomb/Assignment 1_2(1)/Assignment 1/bomb003/bomb 
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+this is phase_1 bomb
+Breakpoint 1, 0x0000000000400e8d in phase_1 ()
+(gdb) dia
+Undefined command: "dia".  Try "help".
+(gdb) disas 
+Dump of assembler code for function phase_1:
+=> 0x0000000000400e8d <+0>:	sub    $0x8,%rsp  // building stack frame with 8 more bytes
+   0x0000000000400e91 <+4>:	mov    $0x4023b0,%esi   // what is being moved?
+   0x0000000000400e96 <+9>:	callq  0x40132b <strings_not_equal>  // this line compares our input string with the actual answer/string.
+   0x0000000000400e9b <+14>:	test   %eax,%eax
+   0x0000000000400e9d <+16>:	je     0x400ea4 <phase_1+23>
+   0x0000000000400e9f <+18>:	callq  0x40142a <explode_bomb>
+   0x0000000000400ea4 <+23>:	add    $0x8,%rsp
+   0x0000000000400ea8 <+27>:	retq   
+End of assembler dump.
+
+(gdb) ni    // ni move to next line
+0x0000000000400e91 in phase_1 ()
+(gdb) ni
+0x0000000000400e96 in phase_1 ()
+(gdb) disas
+Dump of assembler code for function phase_1:
+   0x0000000000400e8d <+0>:	sub    $0x8,%rsp
+   0x0000000000400e91 <+4>:	mov    $0x4023b0,%esi
+=> 0x0000000000400e96 <+9>:	callq  0x40132b <strings_not_equal>
+   0x0000000000400e9b <+14>:	test   %eax,%eax
+   0x0000000000400e9d <+16>:	je     0x400ea4 <phase_1+23>
+   0x0000000000400e9f <+18>:	callq  0x40142a <explode_bomb>
+   0x0000000000400ea4 <+23>:	add    $0x8,%rsp
+   0x0000000000400ea8 <+27>:	retq   
+End of assembler dump.
+(gdb) x/s0x4023b0  // Lets examine what is being moved from address 0x4024bc. We know it has to be a string of some sort so we use '/s'
+0x4023b0:	"Border relations with Canada have never been better." // from the above address we got the actual string to defuse the bomb in phase_1
+//So this string is being moved into %esi, and will be passed into <strings_not_equal>.
+(gdb) d  //  destroying the break point to defuse the bomb 
+Delete all breakpoints? (y or n) y
+(gdb) r // run the program to execute
+The program being debugged has been started already.
+Start it from the beginning? (y or n) y
+Starting program: /home/lab-2/Desktop/Bomb/Assignment 1_2(1)/Assignment 1/bomb003/bomb 
+Welcome to my fiendish little bomb. You have 6 phases with
+which to blow yourself up. Have a nice day!
+Border relations with Canada have never been better.
+Phase 1 defused. How about the next one? // so the solution/ string for the phase_1 is Border relations with Canada have never been better.
+
